@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request, send_file
 from app import db  # Necesitamos db para iniciar el repositorio
-from app.mapping.alumno_mapping import AlumnoSchema
+from app.mapping.alumno_mapping import AlumnoSchema, AlumnoMapper # Importamos Schema y Mapper
 from app.services.alumno_service import AlumnoService
-from app.repositories.alumno_repositorio import AlumnoRepository # Importante importar el Repo
+from app.repositories.alumno_repositorio import AlumnoRepository 
 
 alumno_bp = Blueprint('alumno', __name__)
 
@@ -15,17 +15,43 @@ def _get_alumno_service():
     repo = AlumnoRepository(session=db.session)
     return AlumnoService(repositorio=repo)
 
-# --- Rutas ---
+# --- RUTAS ---
+
+@alumno_bp.route('/alumnos', methods=['POST'])
+def crear_alumno():
+    """
+    Endpoint para crear alumno usando Mapper y Objetos.
+    """
+    service = _get_alumno_service()
+    json_data = request.get_json()
+    
+    # 1. El Mapper se encarga de TODO:
+    #    - Valida tipos y obligatorios.
+    #    - Convierte camelCase a snake_case.
+    #    - Crea la instancia del objeto Alumno.
+    try:
+        nuevo_alumno_obj = AlumnoMapper.from_json(json_data)
+    except Exception as e:
+        # Capturamos errores de validación de Marshmallow
+        return jsonify(e.messages if hasattr(e, 'messages') else {"error": str(e)}), 400
+
+    try:
+        # 2. Pasamos el OBJETO al servicio (Compatible con tu nuevo Service)
+        alumno_creado = service.crear_alumno(nuevo_alumno_obj)
+        
+        # 3. Usamos el Mapper para devolver JSON (snake_case -> camelCase)
+        return jsonify(AlumnoMapper.to_json(alumno_creado)), 201
+        
+    except ValueError as e:
+        # Capturamos errores de negocio (ej: Legajo duplicado)
+        return jsonify({"error": str(e)}), 400
 
 @alumno_bp.route('/alumnos', methods=['GET'])
 def listar_alumnos():
-    # 1. Obtenemos la instancia del servicio ("viva")
     service = _get_alumno_service()
-    
-    # 2. Usamos el método de instancia (sin static)
     alumnos = service.buscar_todos()
     
-    # 3. Retornamos JSON
+    # Usamos el Schema directo para listas (más rápido que iterar el Mapper)
     return jsonify(AlumnoSchema(many=True).dump(alumnos)), 200
 
 @alumno_bp.route('/alumnos/<int:id>', methods=['GET'])
@@ -36,33 +62,13 @@ def buscar_por_id(id):
     if alumno is None:
         return jsonify({"error": "Alumno no encontrado"}), 404
         
+    # Usamos el Schema para un solo objeto
     return jsonify(AlumnoSchema().dump(alumno)), 200
 
-# Endpoint para crear (Faltaba en tu código, necesario para probar el POST)
-@alumno_bp.route('/alumnos', methods=['POST'])
-def crear_alumno():
-    service = _get_alumno_service()
-    json_data = request.get_json()
-    
-    # Validamos esquema de entrada (opcional pero recomendado)
-    errors = AlumnoSchema().validate(json_data)
-    if errors:
-        return jsonify(errors), 400
-
-    try:
-        nuevo_alumno = service.crear_alumno(json_data)
-        return jsonify(AlumnoSchema().dump(nuevo_alumno)), 201
-    except ValueError as e:
-        # Capturamos el error de validación del servicio (ej: legajo duplicado)
-        return jsonify({"error": str(e)}), 400
-
-# PDF (Ojo: Necesitas implementar generar_pdf en el servicio nuevo)
 @alumno_bp.route('/alumnos/<int:id>/pdf', methods=['GET'])
 def get_alumno_pdf(id):
     service = _get_alumno_service()
     
-    # Asegúrate de agregar el método 'generar_pdf' a tu clase AlumnoService refactorizada
-    # Si no lo tienes, esto dará error.
     try:
         pdf_buffer = service.generar_pdf(id) 
         if pdf_buffer is None:
@@ -76,4 +82,7 @@ def get_alumno_pdf(id):
         )
     except AttributeError:
         return jsonify({"error": "Generación de PDF no implementada en el servicio"}), 501
+    except Exception as e:
+        return jsonify({"error": f"Error interno generando PDF: {str(e)}"}), 500
+
 
