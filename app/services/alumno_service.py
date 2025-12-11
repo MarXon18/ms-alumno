@@ -5,25 +5,20 @@ from reportlab.lib.pagesizes import letter
 
 class AlumnoService:
     def __init__(self, repositorio):
-        """
-        Inyección de Dependencia: El servicio recibe el repositorio.
-        Esto permite pasarle un repositorio FALSO (Mock) en los tests.
-        """
         self.repo = repositorio
 
-    def crear_alumno(self, data: dict) -> Alumno:
+    # CAMBIO IMPORTANTE: Ahora recibe un OBJETO Alumno, no un dict
+    def crear_alumno(self, alumno_nuevo: Alumno) -> Alumno:
         """
-        Contiene lógica de negocio antes de guardar.
+        Recibe un objeto Alumno ya instanciado por el Mapper.
         """
-        # 1. Lógica de Negocio: Validación de duplicados
-        if self.repo.existe_legajo(data['nro_legajo']):
+        # 1. Validamos usando el atributo del objeto (ya no ['clave'])
+        if self.repo.existe_legajo(alumno_nuevo.nro_legajo):
              raise ValueError("El legajo ya existe")
 
-        # 2. Creación del objeto usando desempaquetado de diccionario
-        nuevo_alumno = Alumno(**data)
-        
-        # 3. Delegar persistencia al repositorio
-        return self.repo.crear(nuevo_alumno)
+        # 2. Ya no hace falta instanciar Alumno(**data), porque ya es un objeto.
+        #    Pasamos directamente el objeto al repositorio.
+        return self.repo.crear(alumno_nuevo)
 
     def buscar_por_id(self, id: int) -> Alumno:
         alumno = self.repo.buscar_por_id(id)
@@ -92,3 +87,4 @@ class AlumnoService:
         # Mover el puntero al inicio del buffer para que Flask pueda leerlo desde el principio
         buffer.seek(0)
         return buffer
+
