@@ -42,27 +42,3 @@ def buscar_por_id(id):
 def listar_alumnos():
     alumnos = AlumnoService.buscar_todos()
     return AlumnoSchema().dump(alumnos, many=True),200
-
-@alumno_bp.route('/alumno', methods=['POST'])
-@validate_with(AlumnoMapper)
-def crear(data: Alumno):
-    AlumnoService.crear_alumno(data)
-    return jsonify({"mensaje": "Alumno creado correctamente"}),201
-
-@alumno_bp.route('/alumno/<int:id>', methods=['PUT'])
-@validate_with(AlumnoMapper)
-def actualizar(data: Alumno, id: int):
-    actualizado = AlumnoService.actualizar_alumno(id, data)
-  
-    if actualizado is None:
-        return jsonify({"error": "Alumno no encontrado"}), 404
-    return jsonify({"mensaje": "Alumno actualizado correctamente"}), 200
-
-# DELETE /alumno/<id>
-@alumno_bp.route('/alumno/<int:id>', methods= ['DELETE'])
-def borrar(id):
-    eliminado = AlumnoService.borrar_por_id(id)
-    if eliminado is None:
-        return jsonify({"error": "Alumno no encontrado"}), 404
-    return jsonify({"mensaje": "Alumno eliminado correctamente"}), 200
-
