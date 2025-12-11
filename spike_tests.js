@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { Trend } from 'k6/metrics';
-import { check, sleep } from 'k6';
+import { check } from 'k6';
 
 const statusTrend = new Trend('status_codes');
 
@@ -23,7 +23,7 @@ export default function () {
 
     // 2. Cambia la petición a un GET hacia un endpoint válido, como '/alumno'.
     //    No necesitamos 'payload' ni 'params' para una petición GET simple.
-    const res = http.get(`${BASE_URL}/alumno`, params);
+    const res = http.get(`${BASE_URL}/alumno/1/`); // Ejemplo: obtener el alumno con ID 1
    
 
     
