@@ -18,11 +18,7 @@ export const options = {
 
 export default function () {
     // Apuntamos al entrypoint HTTPS de Traefik.
-    const BASE_URL = 'https://localhost';
-    const params = {
-        headers: {
-            'Host': 'alumnos.universidad.localhost',
-        },
+    const BASE_URL = 'https://alumnos.universidad.localhost';
     };
 
     // 2. Cambia la petición a un GET hacia un endpoint válido, como '/alumno'.
@@ -37,8 +33,4 @@ export default function () {
         'status is 200': (r) => r.status === 200, // El endpoint /alumno debería devolver 200 OK
         'status is not 500': (r) => r.status !== 500, // Verificamos que no haya errores internos del servidor
     });
-
-    // Agregamos una pausa de 1 segundo al final de cada iteración.
-    // Esto simula un comportamiento de usuario más realista y evita agotar los puertos de red del sistema operativo.
-    sleep(1);
 }
