@@ -43,3 +43,14 @@ class AlumnoService:
                 setattr(alumno, clave, valor)
 
         return self.repo.actualizar(alumno)
+    def generar_pdf(self, id: int):
+        alumno = self.repo.buscar_por_id(id)
+        if not alumno:
+            return None
+        
+        # Aquí va tu lógica de ReportLab usando los datos de 'alumno'
+        # ...
+        buffer = io.BytesIO()
+        # ... generar pdf en buffer ...
+        buffer.seek(0)
+        return buffer
