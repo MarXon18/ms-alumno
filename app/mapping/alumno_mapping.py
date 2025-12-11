@@ -7,7 +7,7 @@ class AlumnoSchema(Schema):
     data_key='...' permite leer un campo del JSON (ej: firstName) 
     y asignarlo a un campo interno diferente (ej: nombre).
     """
-    id = fields.Int(dump_only=True) # El ID lo genera la BD, no lo leemos del JSON
+   id = fields.Int(dump_only=True) # El ID lo genera la BD, no lo leemos del JSON
     
     # Mapeo de campos con cambio de nombre (CamelCase -> snake_case)
     apellido = fields.Str(required=True, data_key="lastName")
@@ -15,19 +15,14 @@ class AlumnoSchema(Schema):
     
     nro_documento = fields.Str(required=True, data_key="documentNumber")
     
-    # Conversión automática de String ISO a DateTime
-    fecha_nacimiento = fields.DateTime(required=True, data_key="birthDate")
-    
     sexo = fields.Str(required=True, validate=validate.OneOf(["M", "F", "X"]), data_key="gender")
     
     nro_legajo = fields.Int(required=True, data_key="studentFileNumber")
     
-    fecha_ingreso = fields.DateTime(required=True, data_key="admissionDate")
-    
     # Manejo de Foreign Keys
     tipo_documento_id = fields.Int(required=True, data_key="documentTypeId")
     
-    facultad_id = fields.Int(allow_none=True, data_key="facultyId")
+    especialidad_id = fields.Int(required=True, data_key="specialtyId")
 
     @post_load
     def make_alumno(self, data, **kwargs):
@@ -50,4 +45,5 @@ class AlumnoMapper:
     @staticmethod
     def to_json(alumno: Alumno) -> dict:
         schema = AlumnoSchema()
+
         return schema.dump(alumno)
