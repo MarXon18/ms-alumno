@@ -15,17 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /home/sysacad
-
-# Copiamos primero el archivo de dependencias para aprovechar el cache de Docker
-COPY --chown=sysacad:sysacad ./requirements.txt ./requirements.txt
-
-# Cambiamos al usuario no-root ANTES de instalar dependencias
 USER sysacad
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copiamos el resto del código de la aplicación
-COPY --chown=sysacad:sysacad ./app ./app
-COPY --chown=sysacad:sysacad ./app.py .
 
 EXPOSE 5000
 
@@ -33,4 +23,5 @@ EXPOSE 5000
 # --bind 0.0.0.0:5000: Escucha en todas las interfaces de red dentro del contenedor.
 # --workers 4: Inicia 4 procesos para manejar peticiones en paralelo. Un buen punto de partida es (2 * CPU cores) + 1.
 # app:app: Le dice a Gunicorn que busque el objeto 'app' dentro del módulo 'app.py'.
+
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "app:app"]
