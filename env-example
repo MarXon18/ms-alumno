@@ -1,0 +1,29 @@
+# --- Configuración de Redis ---
+# Generalmente localhost o 127.0.0.1 para desarrollo local
+REDIS_HOST=127.0.0.1
+
+# El puerto por defecto de Redis es 6379
+REDIS_PORT=6379
+
+# Si no tienes contraseña en local, puedes dejarlo vacío o poner una cadena
+REDIS_PASSWORD=1234
+
+# --- Configuración de Base de Datos ---
+# Host de la DB (localhost, IP o URL de AWS RDS/DigitalOcean)
+HOST_DB=localhost
+
+# Usuario principal (ej. root, postgres, admin)
+USER_DB=Alumno
+
+# Contraseña de acceso a la base de datos
+PASSWORD_DB=12345678
+
+# El nombre exacto de la base de datos a la que te conectarás
+NAME_DB=ms_alumno
+
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+SQLALCHEMY_RECORD_QUERIES=True
+FLASK_CONTEXT=development
+TEST_DATABASE_URI=postgresql+psycopg2://nombre:12345678@localhost:5432/TEST_SYSACAD
+DEV_DATABASE_URI=postgresql+psycopg2://nombre:12345678@localhost:5432/DEV_SYSACAD
+PROD_DATABASE_URI=postgresql://nombre:12345678@localhost:5432/SYSACAD
