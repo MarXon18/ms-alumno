@@ -14,13 +14,8 @@ class Alumno(db.Model):
     apellido: Mapped[str] = mapped_column(String(100), nullable=False)
     nombre: Mapped[str] = mapped_column(String(100), nullable=False)
     nro_documento: Mapped[str] = mapped_column(String(50), nullable=False)
-    fecha_nacimiento: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     sexo: Mapped[str] = mapped_column(String(10), nullable=False)
     nro_legajo: Mapped[int] = mapped_column(Integer, nullable=False)
-    fecha_ingreso: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-
     tipo_documento_id: Mapped[int] = mapped_column(ForeignKey("documentos.id"), nullable=False)
     tipo_documento: Mapped["Documento"] = relationship("Documento", backref="alumnos")
-
-    facultad_id: Mapped[int] = mapped_column(ForeignKey("facultades.id"), nullable=True)
-    facultad: Mapped["Facultad"] = relationship("Facultad", backref="alumnos")
+    especialidad_id = fields.Int(required=True, data_key="specialtyId")
