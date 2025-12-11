@@ -7,12 +7,8 @@ El Microservisio Alumno es una API REST de gestión académica construida con **
 - Marcos Aranda
 - Luanna Guajardo
 - Axel Sanchez
-- Agustin Carbajal
 - Lucas Becerra
-- Pablo La Torre
 - Joaquín Moliterno
-- (iA) ChatGPT
-- (iA) Copilot
   
 ## SysAcad
 - https://github.com/MarXon18/SysAcad
