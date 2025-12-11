@@ -34,14 +34,12 @@ class AlumnoService:
         if not alumno:
             return None
 
-        # Actualización dinámica (evita asignar uno por uno)
         for clave, valor in data_actualizada.items():
+            # PROTECCIÓN: Nunca permitas actualizar el ID
+            if clave == 'id':
+                continue
+                
             if hasattr(alumno, clave):
                 setattr(alumno, clave, valor)
 
-        # El repo se encarga de guardar (commit)
         return self.repo.actualizar(alumno)
-
-    def borrar_por_id(self, id: int):
-        return self.repo.borrar_por_id(id)
-
