@@ -7,7 +7,7 @@ class AlumnoSchema(Schema):
     data_key='...' permite leer un campo del JSON (ej: firstName) 
     y asignarlo a un campo interno diferente (ej: nombre).
     """
-   id = fields.Int(dump_only=True) # El ID lo genera la BD, no lo leemos del JSON
+    id = fields.Int(dump_only=True) # El ID lo genera la BD, no lo leemos del JSON
     
     # Mapeo de campos con cambio de nombre (CamelCase -> snake_case)
     apellido = fields.Str(required=True, data_key="lastName")
@@ -47,3 +47,4 @@ class AlumnoMapper:
         schema = AlumnoSchema()
 
         return schema.dump(alumno)
+
