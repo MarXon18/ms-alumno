@@ -17,35 +17,6 @@ def _get_alumno_service():
 
 # --- RUTAS ---
 
-@alumno_bp.route('/alumnos', methods=['POST'])
-def crear_alumno():
-    """
-    Endpoint para crear alumno usando Mapper y Objetos.
-    """
-    service = _get_alumno_service()
-    json_data = request.get_json()
-    
-    # 1. El Mapper se encarga de TODO:
-    #    - Valida tipos y obligatorios.
-    #    - Convierte camelCase a snake_case.
-    #    - Crea la instancia del objeto Alumno.
-    try:
-        nuevo_alumno_obj = AlumnoMapper.from_json(json_data)
-    except Exception as e:
-        # Capturamos errores de validación de Marshmallow
-        return jsonify(e.messages if hasattr(e, 'messages') else {"error": str(e)}), 400
-
-    try:
-        # 2. Pasamos el OBJETO al servicio (Compatible con tu nuevo Service)
-        alumno_creado = service.crear_alumno(nuevo_alumno_obj)
-        
-        # 3. Usamos el Mapper para devolver JSON (snake_case -> camelCase)
-        return jsonify(AlumnoMapper.to_json(alumno_creado)), 201
-        
-    except ValueError as e:
-        # Capturamos errores de negocio (ej: Legajo duplicado)
-        return jsonify({"error": str(e)}), 400
-
 @alumno_bp.route('/alumnos', methods=['GET'])
 def listar_alumnos():
     service = _get_alumno_service()
@@ -84,5 +55,6 @@ def get_alumno_pdf(id):
         return jsonify({"error": "Generación de PDF no implementada en el servicio"}), 501
     except Exception as e:
         return jsonify({"error": f"Error interno generando PDF: {str(e)}"}), 500
+
 
 
