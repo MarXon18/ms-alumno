@@ -17,12 +17,14 @@ WORKDIR /home/sysacad
 # Docker se salta este paso y usa la memoria caché (Build más rápido).
 COPY --chown=sysacad:sysacad requirements.txt .
 
-USER sysacad
-
 # Instalamos uv y luego las dependencias con uv.
 # --no-cache: Para que la imagen pese menos.
+# Instala uv y luego usa uv para instalar las dependencias del proyecto de forma eficiente.
 RUN pip install --no-cache-dir uv && \
-    uv pip install --no-cache -r requirements.txt gunicorn
+    uv pip install --system --no-cache -r requirements.txt
+
+USER sysacad
+
 
 # 4. Copia del Código Fuente
 # Copiamos el resto de los archivos con los permisos correctos.
@@ -32,4 +34,5 @@ EXPOSE 5000
 
 # 5. Ejecución
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "app:app"]
+
 
