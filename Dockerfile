@@ -19,11 +19,10 @@ COPY --chown=sysacad:sysacad requirements.txt .
 
 USER sysacad
 
-# Instalamos dependencias + Gunicorn
-# --no-cache-dir: Para que la imagen pese menos.
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install gunicorn
+# Instalamos uv y luego las dependencias con uv.
+# --no-cache: Para que la imagen pese menos.
+RUN pip install --no-cache-dir uv && \
+    uv pip install --no-cache -r requirements.txt gunicorn
 
 # 4. Copia del Código Fuente
 # Copiamos el resto de los archivos con los permisos correctos.
@@ -33,3 +32,4 @@ EXPOSE 5000
 
 # 5. Ejecución
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "app:app"]
+
